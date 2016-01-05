@@ -3,8 +3,21 @@
 var dispatcher = new Dispatcher;
 
 function initForm() {
-	console.log('initForm');
+	var have = document.querySelector('#have');
+	var want = document.querySelector('#want');
+	var result = document.querySelector('#result');
+	// console.log('initForm');
 	dispatcher.on('renderCurrencies', renderCurrencies);
+	have.addEventListener('change', function(event) {
+		dispatcher.fire('haveChanged', event);
+	});
+	want.addEventListener('change', function(event) {
+		dispatcher.fire('wantChanged', event);
+	});
+	result.addEventListener('click', function(event) {
+		dispatcher.fire('exchange', event);
+	})
+
 }
 
 function renderCurrencies(model) {
@@ -14,8 +27,6 @@ function renderCurrencies(model) {
 		var have = document.querySelector('#have');
 		var want = document.querySelector('#want');
 		var el;
-
-		console.log('renderCurrencies');
 
 		defaultOption.textContent = 'Select currency';
 
