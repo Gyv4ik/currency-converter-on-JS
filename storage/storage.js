@@ -26,7 +26,8 @@
 		console.log('init app');
 		dispatcher.on('newDataReceived', parseData);
 		dispatcher.on('haveChanged', haveOnChangeHandler);
-		// dispatcher.on('wantChanged', wantOnChangeHandler);
+		dispatcher.on('wantChanged', wantOnChangeHandler);
+		dispatcher.on('amountChanged', inputHandler)
 		dispatcher.on('exchange');
 	}
 
@@ -40,7 +41,7 @@
 		});
 		console.log(model.ccyList);
 		console.log(model.ccyRates);
-		dispatcher.fire('renderCurrencies', model);
+		dispatcher.fire('renderData', model);
 	}
 
 	function haveOnChangeHandler(event) {
@@ -66,9 +67,49 @@
 		model.state.want.value = event.target.value;
 	}
 
-	function exchangeHandler(event) {
-		model.state.
+	function inputHandler(event) {
+		var value = parseFloat(event.target.value);
+		var blockClass = document.querySelector('.form__amount');
+		if (value < 0) {
+			dispatcher.fire('notValid', blockClass);
+			return;
+		}
+		dispatcher.fire('isValid', blockClass)
 	}
+
+	function exchangeHandler(event) {
+		var haveBlock;
+		var wantBlock;
+		if (have.length !== CCY_LEN) {
+			haveBlock = document.querySelector('.form__have');
+			dispatcher.fire('notValid', haveBlock);
+		}
+		if (want.length !== CCY_LEN) {
+			wantBlock = document.querySelector('.form__want');
+			dispatcher.fire('notValid', wantBlock);
+			return;
+		}
+		dispatcher.fire('isValid', [haveBlock, wantBlock]);
+		calcResult();
+	}
+
+	// function calcResult() {
+	// 	var have = model.state.have.selected;
+	// 	var want = model.state.want.selected;
+	// 	var baseCcy = model.base_ccy;
+
+	// 	if ($(have).val() == baseCcy) {
+	// 		return model.state.result = convertHryvna('from');
+	// 	}
+
+	// 	else if ($(want).val() == baseCcy) {
+	// 		return model.state.result = convertHryvna('to');
+	// 	}
+
+	// 	else {
+	// 		return model.state.result = (convertHryvna('to') / _.find(model.ccyData, {'ccy': $(want).val()}).sale).toFixed(2);
+	// 	}
+	// }
 
 	window.initApp = initApp;
 

@@ -45,23 +45,7 @@ window.addEventListener('load', function () {
 	// 	model.state.want.selected = selectedCcy;
 	// }
 
-	// function calcResult() {
-	// 	var have = model.state.have.selected;
-	// 	var want = model.state.want.selected;
-	// 	var baseCcy = model.ccyData[0].base_ccy;
 
-	// 	if ($(have).val() == baseCcy) {
-	// 		return model.state.result = convertHryvna('from');
-	// 	}
-
-	// 	else if ($(want).val() == baseCcy) {
-	// 		return model.state.result = convertHryvna('to');
-	// 	}
-
-	// 	else {
-	// 		return model.state.result = (convertHryvna('to') / _.find(model.ccyData, {'ccy': $(want).val()}).sale).toFixed(2);
-	// 	}
-	// }
 
 	// function convertHryvna(direction) {
 	// 	var have = model.state.have.selected;
