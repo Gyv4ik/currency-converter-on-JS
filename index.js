@@ -1,11 +1,15 @@
-	var CCY_LEN = 3;
-	var have = document.querySelector('#have');
-	var want = document.querySelector('#want');
-	var amount = document.querySelector('#amount');
-	var result = document.querySelector('#result');
-	var exchange = document.querySelector('#exchange');
+window.addEventListener('load', function () {
 
+	initApp();
+	initForm();
 	initCurrencies();
+
+});
+
+	// var CCY_LEN = 3;
+
+
+	// initCurrencies();
 
 
 	// $("#have").on('change', null, haveChangeHandler);
@@ -19,43 +23,6 @@
 	// 	$('#result').val(calcResult());
 	// 	return false;
 	// });
-
-	function initCurrencies() {
-		var req = new XMLHttpRequest();
-
-		req.open('GET', 'https://api.privatbank.ua/p24api/pubinfo?json&exchange', true);
-		req.send(JSON.stringify({coursid: 5}));
-		req.onreadystatechange = handleInit;
-	}
-
-	function render() {
-
-		var fragment = document.createDocumentFragment();
-		var defaultOption = document.createElement('option');
-		var baseCcyOption = document.createElement('option');
-		var baseCcy = model.ccyData[0].base_ccy;
-		var currencies = model.ccyData;
-		var el;
-		var ccy;
-
-		defaultOption.textContent = 'Select currency';
-		baseCcyOption.textContent = baseCcy;
-		baseCcyOption.setAttribute('value', baseCcy);
-
-		fragment.appendChild(defaultOption);
-		fragment.appendChild(baseCcyOption);
-		for (var item in currencies) {
-			ccy = currencies[item].ccy;
-			if (ccy == 'BTC') continue;
-			el = document.createElement('option');
-			el.textContent = ccy;
-			el.setAttribute('value', ccy);
-			fragment.appendChild(el);
-		}
-
-		have.appendChild(fragment.cloneNode(true));
-		want.appendChild(fragment);
-	}
 
 	// function haveChangeHandler() {
 	// 	var haveVal = $(this).val();
