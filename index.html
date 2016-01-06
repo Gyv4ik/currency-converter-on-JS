@@ -11,56 +11,13 @@
     </style>
 </head>
 <body>
-    <form class="form form-horizontal" novalidate>
-        <fieldset>
-
-            <legend>Converter</legend>
-
-            <div class="form__have form-group">
-                <label class="col-md-4 control-label" for="have">Currency I have:</label>
-                <div class="col-md-4">
-                    <select id="have" name="have" class="form-control"></select>
-                    <span class="help-block">Please, choose the currency</span>
-                </div>
-            </div>
-
-            <div class="form__want form-group">
-                <label class="col-md-4 control-label" for="want">Currency I want:</label>
-                <div class="col-md-4">
-                    <select id="want" name="want" class="form-control"></select>
-                    <span class="help-block">Please, choose the currency</span>
-                </div>
-            </div>
-
-            <div class="form__amount form-group">
-                <label class="col-md-4 control-label" for="amount">Amount</label>
-                <div class="col-md-4">
-                    <input id="amount" name="amount" type="number" min="0" placeholder="Enter amount" class="form-control input-md">
-                    <span class="help-block">Please, enter valid amount</span>
-                </div>
-            </div>
-
-            <div class="form__result form-group">
-                <label class="col-md-4 control-label" for="result">Result</label>
-                <div class="col-md-4">
-                    <input id="result" name="result" type="text" class="form-control input-md" disabled readonly>
-                </div>
-            </div>
-
-            <div class="form__exchange form-group">
-                <label class="col-md-4 control-label" for="exchange">Single Button</label>
-                <div class="col-md-4">
-                    <button id="exchange" type="button" name="exchange" class="btn btn-primary" disabled>Exchange</button>
-                </div>
-            </div>
-        </fieldset>
-    </form>
+    <div class="converter"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js"></script>
     <script src='dispatcher.js'></script>
     <script src='index.js'></script>
     <script src='config.js'></script>
-    <script src='form.js'></script>
+    <script src='components/converter/form.js'></script>
     <script src='storage/storage.js'></script>
     <script src='api/api.js'></script>
 </body>

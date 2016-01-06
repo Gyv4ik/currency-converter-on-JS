@@ -1,8 +1,10 @@
 (function(){
 
 var dispatcher = new Dispatcher;
+dispatcher.on('templateIsReceived', insertConverter);
 
 function initForm() {
+	console.log('init form');
 	var have = document.querySelector('#have');
 	var want = document.querySelector('#want');
 	var result = document.querySelector('#result');
@@ -25,6 +27,10 @@ function initForm() {
 		dispatcher.fire('exchange', event);
 	})
 
+}
+
+function insertConverter(template) {
+	document.querySelector('.converter').innerHTML = template;
 }
 
 function renderData(model) {

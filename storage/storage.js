@@ -63,8 +63,9 @@
 		elToHide = want.querySelector('option[value="' + haveVal + '"]');
 		elToHide.hidden = true;
 		model.state.want.hidden = elToHide;
-		if (haveVal.length == CCY_LEN && haveVal == want.value) {
+		if (haveVal == want.value) {
 			elToHide.nextElementSibling ? want.value = elToHide.nextElementSibling.value : want.value = elToHide.previousElementSibling.value;
+			model.state.want.value = want.value;
 		}
 	}
 
