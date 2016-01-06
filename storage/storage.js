@@ -18,8 +18,8 @@
 	}
 
 	var dispatcher = new Dispatcher;
-	var have = document.querySelector('#have');
-	var want = document.querySelector('#want');
+	// var have = getElementById('have');
+	// var want = getElementById('want');
 	var CCY_LEN = 3;
 
 	function initApp() {
@@ -28,42 +28,51 @@
 		dispatcher.on('haveChanged', haveOnChangeHandler);
 		dispatcher.on('wantChanged', wantOnChangeHandler);
 		dispatcher.on('amountChanged', inputHandler)
-		dispatcher.on('exchange');
+		dispatcher.on('exchange', exchangeHandler);
 	}
 
 	function parseData(currencies) {
+		console.log(currencies);
 		model.baseCcy =	currencies[0].base_ccy;
 		model.ccyList.push(model.baseCcy);
 		currencies.forEach(function(el, i) {
 			model.ccyList.push(el.ccy);
-			model.ccyRates[el.base_ccy + el.ccy] = parseFloat(el.sale);
-			model.ccyRates[el.ccy + el.base_ccy] = 1 / parseFloat(el.buy);
+			model.ccyRates[el.base_ccy + el.ccy] = 1 / parseFloat(el.buy);
+			model.ccyRates[el.ccy + el.base_ccy] = parseFloat(el.sale);
 		});
-		console.log(model.ccyList);
-		console.log(model.ccyRates);
 		dispatcher.fire('renderData', model);
 	}
 
 	function haveOnChangeHandler(event) {
 		var hiddenEl = model.state.want.hidden;
+		var want = document.getElementById('want');
 		var selectedItem;
 		var haveVal;
-		var want;
 		var elToHide;
+
+		if (event.target.value.length > CCY_LEN) {
+			model.state.have.value = null;
+			return;
+		}
 
 		model.state.have.value = event.target.value;
 		haveVal = model.state.have.value;
-		want = document.querySelector('#want');
+
 		if (hiddenEl) hiddenEl.hidden = false;
+
 		elToHide = want.querySelector('option[value="' + haveVal + '"]');
 		elToHide.hidden = true;
 		model.state.want.hidden = elToHide;
-		if (haveVal.length == 3) {
+		if (haveVal.length == CCY_LEN && haveVal == want.value) {
 			elToHide.nextElementSibling ? want.value = elToHide.nextElementSibling.value : want.value = elToHide.previousElementSibling.value;
 		}
 	}
 
 	function wantOnChangeHandler(event) {
+		if (event.target.value.length > 3) {
+			model.state.want.value = null;
+			return;
+		}
 		model.state.want.value = event.target.value;
 	}
 
@@ -74,42 +83,60 @@
 			dispatcher.fire('notValid', blockClass);
 			return;
 		}
-		dispatcher.fire('isValid', blockClass)
+		model.state.amount = value;
+		dispatcher.fire('isValid', blockClass);
 	}
 
 	function exchangeHandler(event) {
-		var haveBlock;
-		var wantBlock;
-		if (have.length !== CCY_LEN) {
-			haveBlock = document.querySelector('.form__have');
+		var haveBlock = document.querySelector('.form__have');
+		var wantBlock = document.querySelector('.form__want');
+		var amountBlock = document.querySelector('.form__amount');
+		var have = model.state.have.value;
+		var want = model.state.want.value;
+		var amount = model.state.amount;
+		var flag = false;
+
+		if (!have) {
+			flag = true;
 			dispatcher.fire('notValid', haveBlock);
 		}
-		if (want.length !== CCY_LEN) {
-			wantBlock = document.querySelector('.form__want');
+		else dispatcher.fire('isValid', haveBlock);
+
+		if (!want) {
+			flag = true;
 			dispatcher.fire('notValid', wantBlock);
-			return;
 		}
-		dispatcher.fire('isValid', [haveBlock, wantBlock]);
-		calcResult();
+		else dispatcher.fire('isValid', wantBlock);
+
+		if (!amount) {
+			console.log(amount);
+			flag = true;
+			dispatcher.fire('notValid', amountBlock);
+		}
+		else dispatcher.fire('isValid', amountBlock);
+
+		if (!flag) {
+			flag = false;
+			model.state.result = calcResult();
+			dispatcher.fire('showResult', model.state.result);
+		}
 	}
 
-	// function calcResult() {
-	// 	var have = model.state.have.selected;
-	// 	var want = model.state.want.selected;
-	// 	var baseCcy = model.base_ccy;
+	function calcResult() {
+		var have = model.state.have.value;
+		var want = model.state.want.value;
+		var amount = model.state.amount;
+		var baseCcy = model.baseCcy;
+		var ccyRates = model.ccyRates;
 
-	// 	if ($(have).val() == baseCcy) {
-	// 		return model.state.result = convertHryvna('from');
-	// 	}
+		if (have !== baseCcy && want !== baseCcy) {
+			console.log(ccyRates);
+			console.log(amount * ccyRates[have + baseCcy]);
+			return (amount * ccyRates[have + baseCcy] * ccyRates[baseCcy + want]).toFixed(2);
+		}
 
-	// 	else if ($(want).val() == baseCcy) {
-	// 		return model.state.result = convertHryvna('to');
-	// 	}
-
-	// 	else {
-	// 		return model.state.result = (convertHryvna('to') / _.find(model.ccyData, {'ccy': $(want).val()}).sale).toFixed(2);
-	// 	}
-	// }
+		return (amount * ccyRates[have + want]).toFixed(2);
+	}
 
 	window.initApp = initApp;
 

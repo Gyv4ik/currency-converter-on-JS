@@ -11,6 +11,7 @@ function initForm() {
 	dispatcher.on('renderData', renderData);
 	dispatcher.on('notValid', showError);
 	dispatcher.on('isValid', hideError);
+	dispatcher.on('showResult', showResult);
 	have.addEventListener('change', function(event) {
 		dispatcher.fire('haveChanged', event);
 	});
@@ -20,7 +21,7 @@ function initForm() {
 	amount.addEventListener('blur', function(event) {
 		dispatcher.fire('amountChanged', event);
 	});
-	result.addEventListener('click', function(event) {
+	exchange.addEventListener('click', function(event) {
 		dispatcher.fire('exchange', event);
 	})
 
@@ -53,23 +54,22 @@ function renderData(model) {
 }
 
 function showError(block) {
-	var errorClass = ' has-error';
+	var errorClass = 'has-error';
 
-	block.className += errorClass;
+	block.classList.add(errorClass);
 	block.querySelector('.help-block').style.display = 'block';
+	result.value = '';
 }
 
 function hideError(block) {
 	var errorClass = 'has-error';
 
-	if (Array.isArray(block)) {
-		block.forEach(function(el, i) {
-			el.className = el.className.replace(errorClass, '').trim();
-			el.querySelector('.help-block').style.display = 'none';
-		});
-	}
-	block.className = block.className.replace(errorClass, '').trim();
+	block.classList.remove(errorClass);
 	block.querySelector('.help-block').style.display = 'none';
+}
+
+function showResult(res) {
+	result.value = res;
 }
 
 window.initForm = initForm;
