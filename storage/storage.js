@@ -18,12 +18,9 @@
 	}
 
 	var dispatcher = new Dispatcher;
-	// var have = getElementById('have');
-	// var want = getElementById('want');
 	var CCY_LEN = 3;
 
 	function initApp() {
-		console.log('init app');
 		dispatcher.on('newDataReceived', parseData);
 		dispatcher.on('haveChanged', haveOnChangeHandler);
 		dispatcher.on('wantChanged', wantOnChangeHandler);
@@ -32,7 +29,6 @@
 	}
 
 	function parseData(currencies) {
-		console.log(currencies);
 		model.baseCcy =	currencies[0].base_ccy;
 		model.ccyList.push(model.baseCcy);
 		currencies.forEach(function(el, i) {
@@ -45,17 +41,20 @@
 
 	function haveOnChangeHandler(event) {
 		var hiddenEl = model.state.want.hidden;
+		var value = event.target.value;
 		var want = document.getElementById('want');
+		var haveBlock = document.querySelector('.form__have');
 		var selectedItem;
 		var haveVal;
 		var elToHide;
 
-		if (event.target.value.length > CCY_LEN) {
+		if (value.length > CCY_LEN) {
 			model.state.have.value = null;
+			dispatcher.fire('notValid', haveBlock);
 			return;
 		}
 
-		model.state.have.value = event.target.value;
+		model.state.have.value = value;
 		haveVal = model.state.have.value;
 
 		if (hiddenEl) hiddenEl.hidden = false;
@@ -67,60 +66,55 @@
 			elToHide.nextElementSibling ? want.value = elToHide.nextElementSibling.value : want.value = elToHide.previousElementSibling.value;
 			model.state.want.value = want.value;
 		}
+		dispatcher.fire('isValid', haveBlock);
 	}
 
 	function wantOnChangeHandler(event) {
-		if (event.target.value.length > 3) {
+		var value = event.target.value;
+		var wantBlock = document.querySelector('.form__want');
+
+		if (value.length > CCY_LEN) {
 			model.state.want.value = null;
+			dispatcher.fire('notValid', wantBlock);
 			return;
 		}
-		model.state.want.value = event.target.value;
+		model.state.want.value = value;
+		dispatcher.fire('isValid', wantBlock);
 	}
 
 	function inputHandler(event) {
 		var value = parseFloat(event.target.value);
-		var blockClass = document.querySelector('.form__amount');
-		if (value < 0) {
-			dispatcher.fire('notValid', blockClass);
+		var amountBlock = document.querySelector('.form__amount');
+
+		isNaN(value) ? model.state.amount = null : model.state.amount = value;
+		if (!model.state.amount || model.state.aomunt < 1) {
+			dispatcher.fire('notValid', amountBlock);
 			return;
 		}
-		model.state.amount = value;
-		dispatcher.fire('isValid', blockClass);
+
+		dispatcher.fire('isValid', amountBlock);
 	}
 
 	function exchangeHandler(event) {
-		var haveBlock = document.querySelector('.form__have');
-		var wantBlock = document.querySelector('.form__want');
-		var amountBlock = document.querySelector('.form__amount');
 		var have = model.state.have.value;
 		var want = model.state.want.value;
 		var amount = model.state.amount;
-		var flag = false;
+		var haveBlock = document.querySelector('.form__have');
+		var wantBlock = document.querySelector('.form__want');
+		var amountBlock = document.querySelector('.form__amount');
 
-		if (!have) {
-			flag = true;
-			dispatcher.fire('notValid', haveBlock);
-		}
+		if (!have) dispatcher.fire('notValid', haveBlock);
 		else dispatcher.fire('isValid', haveBlock);
 
-		if (!want) {
-			flag = true;
-			dispatcher.fire('notValid', wantBlock);
-		}
+		if (!want) dispatcher.fire('notValid', wantBlock);
 		else dispatcher.fire('isValid', wantBlock);
 
-		if (!amount) {
-			console.log(amount);
-			flag = true;
-			dispatcher.fire('notValid', amountBlock);
-		}
+		if (!amount) dispatcher.fire('notValid', amountBlock);
 		else dispatcher.fire('isValid', amountBlock);
 
-		if (!flag) {
-			flag = false;
-			model.state.result = calcResult();
-			dispatcher.fire('showResult', model.state.result);
-		}
+		if (have && want && amount)	model.state.result = calcResult();
+		else model.state.result = '';
+		dispatcher.fire('showResult', model.state.result);
 	}
 
 	function calcResult() {
@@ -131,8 +125,6 @@
 		var ccyRates = model.ccyRates;
 
 		if (have !== baseCcy && want !== baseCcy) {
-			console.log(ccyRates);
-			console.log(amount * ccyRates[have + baseCcy]);
 			return (amount * ccyRates[have + baseCcy] * ccyRates[baseCcy + want]).toFixed(2);
 		}
 

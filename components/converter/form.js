@@ -4,7 +4,6 @@ var dispatcher = new Dispatcher;
 dispatcher.on('templateIsReceived', insertConverter);
 
 function initForm() {
-	console.log('init form');
 	var have = document.querySelector('#have');
 	var want = document.querySelector('#want');
 	var result = document.querySelector('#result');
@@ -20,10 +19,11 @@ function initForm() {
 	want.addEventListener('change', function(event) {
 		dispatcher.fire('wantChanged', event);
 	});
-	amount.addEventListener('blur', function(event) {
+	amount.addEventListener('keyup', function(event) {
 		dispatcher.fire('amountChanged', event);
 	});
 	exchange.addEventListener('click', function(event) {
+		console.log('click');
 		dispatcher.fire('exchange', event);
 	})
 
@@ -64,7 +64,6 @@ function showError(block) {
 
 	block.classList.add(errorClass);
 	block.querySelector('.help-block').style.display = 'block';
-	result.value = '';
 }
 
 function hideError(block) {
