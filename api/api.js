@@ -5,30 +5,21 @@
 	function initConverter() {
 		return new Promise(function(ok, fail) {
 			var req = new XMLHttpRequest();
+
 			req.open('GET', '../components/converter/converter.html', true);
 			req.send();
 			req.onreadystatechange = function() {
 				if (this.readyState == this.DONE) {
-     				if(this.status == 200) {
-     					console.log('newDataReceived');
-     					ok();
-     					dispatcher.fire('templateIsReceived', this.responseText);
+					if(this.status == 200) {
+						// console.log('newDataReceived');
+						ok();
+						dispatcher.fire('templateIsReceived', this.responseText);
 					}
 					else dump("Error loading converter template\n");
 				}
 			}
 		});
 	}
-
-	// function handleInitConverter() {
-	// 	if (this.readyState == this.DONE) {
- //     			if(this.status == 200) {
- //     				dispatcher.fire('templateIsReceived', this.responseText);
- //     				console.log('converter');
-	// 			}
-	// 			else dump("Error loading converter template\n");
- //  		}
-	// }
 
 	function initCurrencies() {
 		var req = new XMLHttpRequest();
@@ -41,11 +32,11 @@
 
 	function handleInitCurrencies() {
 		if (this.readyState == this.DONE) {
-     			if(this.status == 200) {
-     				dataReceived(JSON.parse(this.responseText));
+				if(this.status == 200) {
+					dataReceived(JSON.parse(this.responseText));
 				}
 				else dump("Error loading currencies\n");
-  		}
+		}
 	}
 
 	function dataReceived(currencies) {

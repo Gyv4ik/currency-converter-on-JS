@@ -4,10 +4,10 @@ var dispatcher = new Dispatcher;
 dispatcher.on('templateIsReceived', insertConverter);
 
 function initForm() {
-	var have = document.querySelector('#have');
-	var want = document.querySelector('#want');
-	var result = document.querySelector('#result');
-	var amount = document.querySelector('#amount');
+	var have = document.getElementById('have');
+	var want = document.getElementById('want');
+	var result = document.getElementById('result');
+	var amount = document.getElementById('amount');
 
 	dispatcher.on('renderData', renderData);
 	dispatcher.on('notValid', showError);
@@ -19,14 +19,15 @@ function initForm() {
 	want.addEventListener('change', function(event) {
 		dispatcher.fire('wantChanged', event);
 	});
-	amount.addEventListener('keyup', function(event) {
+	amount.addEventListener('change', function(event) {
 		dispatcher.fire('amountChanged', event);
 	});
+	amount.addEventListener('keyup', function(event) {
+		dispatcher.fire('amountChanged', event);
+	})
 	exchange.addEventListener('click', function(event) {
-		console.log('click');
 		dispatcher.fire('exchange', event);
 	})
-
 }
 
 function insertConverter(template) {

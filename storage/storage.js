@@ -40,7 +40,8 @@
 	}
 
 	function haveOnChangeHandler(event) {
-		var hiddenEl = model.state.want.hidden;
+		var state = model.state;
+		var hiddenEl = state.want.hidden;
 		var value = event.target.value;
 		var want = document.getElementById('want');
 		var haveBlock = document.querySelector('.form__have');
@@ -49,22 +50,22 @@
 		var elToHide;
 
 		if (value.length > CCY_LEN) {
-			model.state.have.value = null;
+			state.have.value = null;
 			dispatcher.fire('notValid', haveBlock);
 			return;
 		}
 
-		model.state.have.value = value;
-		haveVal = model.state.have.value;
+		state.have.value = value;
+		haveVal = state.have.value;
 
 		if (hiddenEl) hiddenEl.hidden = false;
 
 		elToHide = want.querySelector('option[value="' + haveVal + '"]');
 		elToHide.hidden = true;
-		model.state.want.hidden = elToHide;
+		state.want.hidden = elToHide;
 		if (haveVal == want.value) {
 			elToHide.nextElementSibling ? want.value = elToHide.nextElementSibling.value : want.value = elToHide.previousElementSibling.value;
-			model.state.want.value = want.value;
+			state.want.value = want.value;
 		}
 		dispatcher.fire('isValid', haveBlock);
 	}
@@ -72,22 +73,30 @@
 	function wantOnChangeHandler(event) {
 		var value = event.target.value;
 		var wantBlock = document.querySelector('.form__want');
+		var state = model.state;
 
 		if (value.length > CCY_LEN) {
-			model.state.want.value = null;
+			state.want.value = null;
 			dispatcher.fire('notValid', wantBlock);
 			return;
 		}
-		model.state.want.value = value;
+		state.want.value = value;
 		dispatcher.fire('isValid', wantBlock);
 	}
 
 	function inputHandler(event) {
+		var state = model.state;
 		var value = parseFloat(event.target.value);
 		var amountBlock = document.querySelector('.form__amount');
 
-		isNaN(value) ? model.state.amount = null : model.state.amount = value;
-		if (!model.state.amount || model.state.aomunt < 1) {
+		if (isNaN(value) || value < 1) {
+			state.amount = null;
+		}
+		else {
+			state.amount = value;
+		}
+
+		if (!state.amount) {
 			dispatcher.fire('notValid', amountBlock);
 			return;
 		}
@@ -96,9 +105,10 @@
 	}
 
 	function exchangeHandler(event) {
-		var have = model.state.have.value;
-		var want = model.state.want.value;
-		var amount = model.state.amount;
+		var state = model.state;
+		var have = state.have.value;
+		var want = state.want.value;
+		var amount = state.amount;
 		var haveBlock = document.querySelector('.form__have');
 		var wantBlock = document.querySelector('.form__want');
 		var amountBlock = document.querySelector('.form__amount');
@@ -112,15 +122,16 @@
 		if (!amount) dispatcher.fire('notValid', amountBlock);
 		else dispatcher.fire('isValid', amountBlock);
 
-		if (have && want && amount)	model.state.result = calcResult();
-		else model.state.result = '';
-		dispatcher.fire('showResult', model.state.result);
+		if (have && want && amount)	state.result = calcResult();
+		else state.result = '';
+		dispatcher.fire('showResult', state.result);
 	}
 
 	function calcResult() {
-		var have = model.state.have.value;
-		var want = model.state.want.value;
-		var amount = model.state.amount;
+		var state = model.state;
+		var have = state.have.value;
+		var want = state.want.value;
+		var amount = state.amount;
 		var baseCcy = model.baseCcy;
 		var ccyRates = model.ccyRates;
 
